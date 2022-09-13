@@ -1,2 +1,2 @@
 # agileconfig-jclient
-A java agileconfig client .
+A java client for [AgileConfig](https://github.com/dotnetcore/AgileConfig).
