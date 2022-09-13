@@ -7,8 +7,10 @@ public class ConfigClient implements IConfigClient {
 
     private Options options;
     private Map<String, String> data;
+    private IConfigLoader configLoader;
 
     public ConfigClient(Options options) {
+        configLoader = new DefaultHttpConfigLoader();
         this.options = options;
     }
 
@@ -30,5 +32,9 @@ public class ConfigClient implements IConfigClient {
     @Override
     public void load() {
 
+    }
+
+    private void Load(String nodeAddress) {
+        configLoader.getConfigs(nodeAddress, options.getAppId(), options.getSecret());
     }
 }
