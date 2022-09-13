@@ -5,9 +5,9 @@ import java.util.Map;
 
 public class ConfigClient implements IConfigClient {
 
-    private Options options;
+    private final Options options;
     private Map<String, String> data;
-    private IConfigLoader configLoader;
+    private final IConfigLoader configLoader;
 
     public ConfigClient(Options options) {
         configLoader = new DefaultHttpConfigLoader();

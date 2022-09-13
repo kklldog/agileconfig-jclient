@@ -1,15 +1,14 @@
 package mjzhou.agileconfig;
 
-import com.sun.org.slf4j.internal.Logger;
-import com.sun.org.slf4j.internal.LoggerFactory;
-import jdk.nashorn.internal.runtime.regexp.joni.Config;
+import com.fasterxml.jackson.core.type.TypeReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
@@ -42,8 +41,7 @@ public class DefaultHttpConfigLoader implements IConfigLoader {
                     String json = buff.toString();
                     logger.trace("request " + reqUrl + " then response :\n" + json);
 
-                    List<ConfigItem> configs = new ArrayList<ConfigItem>();
-                    return jsonConvert.deserializeObject(json, configs.getClass());
+                    return jsonConvert.deserializeObject(json, new TypeReference<List<ConfigItem>>(){});
                 }
             } else {
                 logger.warn("request " + reqUrl + " failed , the response status code is " + code);

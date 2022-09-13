@@ -1,17 +1,23 @@
 package mjzhou.agileconfig;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 
 public class DefaultJsonConvert implements IJsonConvert {
-    private static ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper();
+
+    public DefaultJsonConvert(){
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
 
     @Override
-    public <T> T deserializeObject(String json, Class<T> var2) {
+    public <T> T deserializeObject(String json, TypeReference<T> typeReference) {
          try {
-             return mapper.readValue(json, var2);
+             return mapper.readValue(json, typeReference);
          }
          catch (Exception ex) {
             ex.printStackTrace();

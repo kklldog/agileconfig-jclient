@@ -18,6 +18,11 @@ class DefaultHttpConfigLoaderTest {
         IConfigLoader loader = new DefaultHttpConfigLoader();
         List<ConfigItem> resp = loader.getConfigs(node, appId, appSecret);
 
+        if (resp.stream().count() > 0) {
+            ConfigItem item = resp.get(0);
+            assertNotNull(item);
+        }
+
         assertNotNull(resp);
     }
 }

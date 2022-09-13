@@ -1,10 +1,10 @@
 package mjzhou.agileconfig;
 
 public class Options {
-    private String strNodes;
-    private String[] nodeArray;
-    private String appId;
-    private String secret;
+    private final String strNodes;
+    private final String[] nodeArray;
+    private final String appId;
+    private final String secret;
 
     public Options(String nodes, String appId, String secret) {
         this.strNodes = ensureEmptyString(nodes);
