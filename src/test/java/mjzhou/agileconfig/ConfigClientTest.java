@@ -13,7 +13,8 @@ class ConfigClientTest {
         String node = "http://agileconfig_server.xbaby.xyz";
         String appId = "test_app";
         String appSecret = "test_app";
-        Options op = new Options(node,appId,appSecret);
+        String env = "";
+        Options op = new Options(node,appId,appSecret,env);
         ConfigClient client =new ConfigClient(op);
         client.load();
         assertNotNull(client.getConfigs());

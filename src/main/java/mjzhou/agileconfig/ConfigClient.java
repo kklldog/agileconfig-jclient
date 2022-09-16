@@ -1,5 +1,7 @@
 package mjzhou.agileconfig;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sun.security.krb5.Config;
 
 import java.util.IdentityHashMap;
@@ -7,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ConfigClient implements IConfigClient {
-
+    private static final Logger logger =  LoggerFactory.getLogger(ConfigClient.class);
     private final Options options;
     private Map<String, String> data;
     private final IConfigLoader configLoader;
@@ -45,14 +47,17 @@ public class ConfigClient implements IConfigClient {
         String[] nodes = options.getNodes();
         boolean testAll = false;
         for (int i = 0; i < nodes.length; i++) {
-            List<ConfigItem> configs = getConfigsFromRemote(nodes[i]);
+            String node = nodes[i];
+            List<ConfigItem> configs = getConfigsFromRemote(node);
             if (configs == null) {
                 if (i == nodes.length -1) {
+                    logger.info(String.format("can NOT get app's configs from all nodes . appid: %s", options.getAppId()));
                     testAll = true;
                 }
                 continue; // cant get configs from node , so try next .
             }
 
+            logger.info(String.format("get app's configs from node success . appid: %s , node: %s", options.getAppId(), node));
             writeConfigsToLocal(configs); // 获取到配置后第一时间写到本地文件
 
             if (data == null) {
@@ -102,6 +107,6 @@ public class ConfigClient implements IConfigClient {
      * @return
      */
     private List<ConfigItem> getConfigsFromRemote(String nodeAddress) {
-        return configLoader.getConfigs(nodeAddress, options.getAppId(), options.getSecret());
+        return configLoader.getConfigs(nodeAddress, options.getAppId(), options.getSecret(), options.getEnv());
     }
 }

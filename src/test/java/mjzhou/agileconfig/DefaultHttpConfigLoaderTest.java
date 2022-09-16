@@ -14,9 +14,10 @@ class DefaultHttpConfigLoaderTest {
         String node = "http://agileconfig_server.xbaby.xyz";
         String appId = "test_app";
         String appSecret = "test_app";
+        String env = "";
 
         IConfigLoader loader = new DefaultHttpConfigLoader();
-        List<ConfigItem> resp = loader.getConfigs(node, appId, appSecret);
+        List<ConfigItem> resp = loader.getConfigs(node, appId, appSecret, env);
 
         if (resp.stream().count() > 0) {
             ConfigItem item = resp.get(0);

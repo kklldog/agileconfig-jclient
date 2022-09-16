@@ -18,7 +18,7 @@ public class DefaultHttpConfigLoader implements IConfigLoader {
     private static final IJsonConvert jsonConvert = new DefaultJsonConvert();
 
     @Override
-    public List<ConfigItem> getConfigs(String node, String appId, String appSecret) {
+    public List<ConfigItem> getConfigs(String node, String appId, String appSecret, String env) {
         if (!node.endsWith("/")){
             node += "/";
         }
