@@ -1,4 +1,4 @@
-package mjzhou.agileconfig;
+package mjzhou.agileconfig.websocket;
 
 import javax.websocket.ClientEndpointConfig;
 import java.nio.charset.StandardCharsets;

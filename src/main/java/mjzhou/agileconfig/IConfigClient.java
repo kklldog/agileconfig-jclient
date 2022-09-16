@@ -24,4 +24,9 @@ public interface IConfigClient {
      * load config items from remote server
      */
     void load();
+
+    /**
+     * disconnect from server
+     */
+    void disconnect();
 }

@@ -1,8 +1,9 @@
 package mjzhou.agileconfig;
 
+import mjzhou.agileconfig.websocket.WebsocketClientEndpoint;
+import mjzhou.agileconfig.websocket.WebsocketMessageHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.security.krb5.Config;
 
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -13,6 +14,8 @@ public class ConfigClient implements IConfigClient {
     private final Options options;
     private Map<String, String> data;
     private final IConfigLoader configLoader;
+
+    private WebsocketClientEndpoint websocketClient;
 
     public ConfigClient(Options options) {
         configLoader = new DefaultHttpConfigLoader();
@@ -39,7 +42,18 @@ public class ConfigClient implements IConfigClient {
 
     @Override
     public void connect() {
+        websocketClient = new WebsocketClientEndpoint(options);
+        websocketClient.addMessageHandler(new WebsocketMessageHandler(this));
+        websocketClient.connect();
+        this.load();
+    }
 
+    @Override
+    public void disconnect() {
+        if (websocketClient != null){
+            websocketClient.disconnect();
+            websocketClient = null;
+        }
     }
 
     @Override

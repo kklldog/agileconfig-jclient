@@ -1,7 +1,11 @@
-package mjzhou.agileconfig;
+package mjzhou.agileconfig.websocket;
 
+import mjzhou.agileconfig.Options;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 import java.net.URI;
-import java.nio.ByteBuffer;
 import javax.websocket.*;
 
 /**
@@ -11,16 +15,26 @@ import javax.websocket.*;
  */
 @ClientEndpoint
 public class WebsocketClientEndpoint extends Endpoint {
+    private static final Logger logger =  LoggerFactory.getLogger(WebsocketClientEndpoint.class);
 
-    Session userSession = null;
+    public boolean isOpened() {
+        return opened;
+    }
+
+    private boolean opened;
+
+    private Session userSession = null;
     private MessageHandler messageHandler;
 
     private WebSocketContainer webSocketContainer;
 
     private Options options;
 
+    private WebsocketClientEndpoint _this;
+
     public WebsocketClientEndpoint(Options options) {
         this.options = options;
+        this._this = this;
         webSocketContainer = ContainerProvider.getWebSocketContainer();
     }
 
@@ -41,25 +55,35 @@ public class WebsocketClientEndpoint extends Endpoint {
         ClientEndpointConfig clientConfig = configBuilder.build();
         try {
             webSocketContainer.connectToServer(this, clientConfig, new URI(server));
+            logger.info(String.format("websocket client connect to %s successful , appId: %s", server, options.getAppId()));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    /**
-     * Callback hook for Connection open events.
-     *
-     * @param userSession the userSession which is opened.
-     */
-    @OnOpen
-    public void onOpen(Session userSession) {
-        System.out.println("opening websocket 0");
-        this.userSession = userSession;
+    public void disconnect(){
+        if (opened) {
+            if (userSession != null) {
+                try {
+                    userSession.close(new CloseReason(CloseReason.CloseCodes.NORMAL_CLOSURE, "close by server force"));
+                } catch (IOException e) {
+                    logger.error("try to close websocket client error", e);
+                }
+            }
+        }
     }
 
     @Override
     public void onOpen(Session session, EndpointConfig endpointConfig) {
-        System.out.println("opening websocket 1");
+        logger.info("opening websocket");
+        this.opened = true;
+        this.userSession = session;
+        this.userSession.addMessageHandler(new javax.websocket.MessageHandler.Whole<String>() {
+            @Override
+            public void onMessage(String s) {
+                _this.onMessage(s);
+            }
+        });
     }
 
     /**
@@ -70,7 +94,8 @@ public class WebsocketClientEndpoint extends Endpoint {
      */
     @OnClose
     public void onClose(Session userSession, CloseReason reason) {
-        System.out.println("closing websocket");
+        logger.info("closing websocket");
+        this.opened = false;
         this.userSession = null;
     }
 
@@ -79,16 +104,11 @@ public class WebsocketClientEndpoint extends Endpoint {
      *
      * @param message The text message
      */
-    @OnMessage
     public void onMessage(String message) {
+        logger.info("receive message " + message);
         if (this.messageHandler != null) {
             this.messageHandler.handleMessage(message);
         }
-    }
-
-    @OnMessage
-    public void onMessage(ByteBuffer bytes) {
-        System.out.println("Handle byte buffer");
     }
 
     /**
@@ -106,13 +126,14 @@ public class WebsocketClientEndpoint extends Endpoint {
      * @param message
      */
     public void sendMessage(String message) {
-        this.userSession.getAsyncRemote().sendText(message);
+        if (this.userSession != null) {
+            this.userSession.getAsyncRemote().sendText(message);
+        }
     }
 
     /**
      * Message handler.
      *
-     * @author Jiji_Sasidharan
      */
     public static interface MessageHandler {
 
