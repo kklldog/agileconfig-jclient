@@ -15,11 +15,14 @@ public class ConfigClient implements IConfigClient {
     private Map<String, String> data;
     private final IConfigLoader configLoader;
 
+    private Thread pingThread;
+
     private WebsocketClientEndpoint websocketClient;
 
     public ConfigClient(Options options) {
         configLoader = new DefaultHttpConfigLoader();
         this.options = options;
+        startPing();
     }
 
     @Override
@@ -54,6 +57,26 @@ public class ConfigClient implements IConfigClient {
             websocketClient.disconnect();
             websocketClient = null;
         }
+    }
+
+    private void startPing(){
+        pingThread = new Thread(new Runnable (){
+            @Override
+            public void run(){
+                while (true) {
+                    try {
+                        Thread.sleep(5000);
+                        if (websocketClient != null && websocketClient.isOpened()){
+                            websocketClient.sendMessage("ping");
+                            logger.trace("send ping message to server");
+                        }
+                    } catch (InterruptedException e) {
+                        logger.error("try to send ping message to server error .", e);
+                    }
+                }
+            }
+        });
+        pingThread.start();
     }
 
     @Override

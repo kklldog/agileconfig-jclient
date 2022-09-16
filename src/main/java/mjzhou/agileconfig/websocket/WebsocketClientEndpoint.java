@@ -9,11 +9,10 @@ import java.net.URI;
 import javax.websocket.*;
 
 /**
- * ChatServer Client
+ * websocket Client
  * copy from https://stackoverflow.com/questions/26452903/javax-websocket-client-simple-example
  * @author Jiji_Sasidharan
  */
-@ClientEndpoint
 public class WebsocketClientEndpoint extends Endpoint {
     private static final Logger logger =  LoggerFactory.getLogger(WebsocketClientEndpoint.class);
 
@@ -92,7 +91,7 @@ public class WebsocketClientEndpoint extends Endpoint {
      * @param userSession the userSession which is getting closed.
      * @param reason the reason for connection close
      */
-    @OnClose
+    @Override
     public void onClose(Session userSession, CloseReason reason) {
         logger.info("closing websocket");
         this.opened = false;
