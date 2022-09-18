@@ -63,7 +63,7 @@ public class ConfigClient implements IConfigClient {
         pingThread = new Thread(new Runnable (){
             @Override
             public void run(){
-                while (true) {
+                while (!Thread.currentThread().isInterrupted()) {
                     try {
                         Thread.sleep(5000);
                         if (websocketClient != null && websocketClient.isOpened()){
@@ -71,7 +71,7 @@ public class ConfigClient implements IConfigClient {
                             logger.trace("send ping message to server");
                         }
                     } catch (InterruptedException e) {
-                        logger.error("try to send ping message to server error .", e);
+                        logger.error("HeartBeat Thread Interrupted .", e);
                     }
                 }
             }
