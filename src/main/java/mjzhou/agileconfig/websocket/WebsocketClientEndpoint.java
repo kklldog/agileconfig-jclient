@@ -27,18 +27,42 @@ public class WebsocketClientEndpoint extends Endpoint {
 
     private WebSocketContainer webSocketContainer;
 
-    private Options options;
-
     private WebsocketClientEndpoint _this;
 
-    public WebsocketClientEndpoint(Options options) {
-        this.options = options;
+    private String appid;
+    private String secret;
+    private String env;
+
+    public String getAppid() {
+        return appid;
+    }
+
+    public String getSecret() {
+        return secret;
+    }
+
+    public String getEnv() {
+        return env;
+    }
+
+    public String getNodeAddress() {
+        return nodeAddress;
+    }
+
+    private String nodeAddress;
+
+    public WebsocketClientEndpoint(String appid,String secret, String env, String nodeAddress) {
         this._this = this;
+        this.appid = appid;
+        this.secret = secret;
+        this.env = env;
+        this.nodeAddress = nodeAddress;
+
         webSocketContainer = ContainerProvider.getWebSocketContainer();
     }
 
     public void connect(){
-        String server = options.getNodes()[0];
+        String server = nodeAddress;
         if (!server.endsWith("/")){
             server += "/";
         }
@@ -50,11 +74,11 @@ public class WebsocketClientEndpoint extends Endpoint {
             server = server.replace("https://","wss://");
         }
         ClientEndpointConfig.Builder configBuilder = ClientEndpointConfig.Builder.create();
-        configBuilder.configurator(new WebsocketClientConfig(options.getAppId(), options.getSecret(), options.getEnv()));
+        configBuilder.configurator(new WebsocketClientConfig(this.appid, this.secret, this.env));
         ClientEndpointConfig clientConfig = configBuilder.build();
         try {
             webSocketContainer.connectToServer(this, clientConfig, new URI(server));
-            logger.info(String.format("websocket client connect to %s successful , appId: %s", server, options.getAppId()));
+            logger.info(String.format("websocket client connect to %s successful , appId: %s", server, this.appid));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

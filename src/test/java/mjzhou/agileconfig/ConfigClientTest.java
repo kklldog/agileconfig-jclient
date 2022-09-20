@@ -64,5 +64,7 @@ class ConfigClientTest {
 
         client.disconnect();
 
+        ConfigClient client1 =new ConfigClient(op);
+        client1.disconnect();
     }
 }

@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ConfigClient implements IConfigClient {
     private static final Logger logger =  LoggerFactory.getLogger(ConfigClient.class);
@@ -16,6 +17,7 @@ public class ConfigClient implements IConfigClient {
     private final IConfigLoader configLoader;
 
     private Thread pingThread;
+    private Thread reconnectThread;
 
     private WebsocketClientEndpoint websocketClient;
 
@@ -43,12 +45,35 @@ public class ConfigClient implements IConfigClient {
         return  "";
     }
 
+    private boolean tryConnect(){
+        RandomServers randomServer = new RandomServers(this.options.getNodes());
+        while (!randomServer.isComplete()) {
+            String node = randomServer.next();
+            websocketClient = new WebsocketClientEndpoint(this.options.getAppId(), this.options.getSecret(),
+                    this.options.getEnv(), node);
+            websocketClient.addMessageHandler(new WebsocketMessageHandler(this));
+            try {
+                websocketClient.connect();
+                logger.info("connect to server " + websocketClient.getNodeAddress() + "successful .");
+                return true;
+            }
+            catch (Exception e) {
+                logger.error(String.format("try connect to server %s fail .", node), e);
+            }
+        }
+
+        logger.info("all the server can not be connected .");
+
+        return false;
+    }
+
     @Override
     public void connect() {
-        websocketClient = new WebsocketClientEndpoint(options);
-        websocketClient.addMessageHandler(new WebsocketMessageHandler(this));
-        websocketClient.connect();
+        tryConnect();
+        // 不管怎么样，都要拉去配置
         this.load();
+        this.startAutoReconnect();
+        this.startPing();
     }
 
     @Override
@@ -56,9 +81,14 @@ public class ConfigClient implements IConfigClient {
         if (websocketClient != null){
             websocketClient.disconnect();
             websocketClient = null;
+            this.pingThread.interrupt();
+            this.reconnectThread.interrupt();
         }
     }
 
+    /**
+     * 打开一个新的线程开始定时发送ping消息
+     */
     private void startPing(){
         pingThread = new Thread(new Runnable (){
             @Override
@@ -79,18 +109,46 @@ public class ConfigClient implements IConfigClient {
         pingThread.start();
     }
 
+    /**
+     * 开始尝试重连
+     */
+    private void startAutoReconnect(){
+        reconnectThread = new Thread(() -> {
+            while (!Thread.currentThread().isInterrupted()) {
+                try {
+                    Thread.sleep(5000);
+                    if (websocketClient != null && websocketClient.isOpened()) {
+                        continue;
+                    }
+
+                    if (tryConnect()){
+                        load();
+                    }
+                } catch (InterruptedException e) {
+                    logger.error("AutoReconnect Thread Interrupted .", e);
+                }
+            }
+        });
+        reconnectThread.start();
+    }
+
     @Override
     public void load() {
         String[] nodes = options.getNodes();
         boolean testAll = false;
-        for (int i = 0; i < nodes.length; i++) {
-            String node = nodes[i];
+        RandomServers randomServer = new RandomServers(nodes);
+
+        int idx = 0;
+        while (!randomServer.isComplete()) {
+            String node = randomServer.next();
             List<ConfigItem> configs = getConfigsFromRemote(node);
             if (configs == null) {
-                if (i == nodes.length -1) {
+                if (idx == nodes.length -1) {
                     logger.info(String.format("can NOT get app's configs from all nodes . appid: %s", options.getAppId()));
                     testAll = true;
+                    break;
                 }
+                idx ++;
                 continue; // cant get configs from node , so try next .
             }
 
@@ -98,7 +156,7 @@ public class ConfigClient implements IConfigClient {
             writeConfigsToLocal(configs); // 获取到配置后第一时间写到本地文件
 
             if (data == null) {
-                data = new IdentityHashMap<>();
+                data = new ConcurrentHashMap<>();
             }
             else {
                 data.clear();
