@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ConfigClient implements IConfigClient {
-    private static final Logger logger =  LoggerFactory.getLogger(ConfigClient.class);
+    private static final Logger logger = LoggerFactory.getLogger(ConfigClient.class);
     private final Options options;
     private Map<String, String> data;
     private final IConfigLoader configLoader;
@@ -42,10 +42,10 @@ public class ConfigClient implements IConfigClient {
             return data.get(key);
         }
 
-        return  "";
+        return "";
     }
 
-    private boolean tryConnect(){
+    private boolean tryConnect() {
         RandomServers randomServer = new RandomServers(this.options.getNodes());
         while (!randomServer.isComplete()) {
             String node = randomServer.next();
@@ -56,8 +56,7 @@ public class ConfigClient implements IConfigClient {
                 websocketClient.connect();
                 logger.info("connect to server " + websocketClient.getNodeAddress() + "successful .");
                 return true;
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 logger.error(String.format("try connect to server %s fail .", node), e);
             }
         }
@@ -78,7 +77,7 @@ public class ConfigClient implements IConfigClient {
 
     @Override
     public void disconnect() {
-        if (websocketClient != null){
+        if (websocketClient != null) {
             websocketClient.disconnect();
             websocketClient = null;
             this.pingThread.interrupt();
@@ -89,14 +88,14 @@ public class ConfigClient implements IConfigClient {
     /**
      * 打开一个新的线程开始定时发送ping消息
      */
-    private void startPing(){
-        pingThread = new Thread(new Runnable (){
+    private void startPing() {
+        pingThread = new Thread(new Runnable() {
             @Override
-            public void run(){
+            public void run() {
                 while (!Thread.currentThread().isInterrupted()) {
                     try {
                         Thread.sleep(5000);
-                        if (websocketClient != null && websocketClient.isOpened()){
+                        if (websocketClient != null && websocketClient.isOpened()) {
                             websocketClient.sendMessage("ping");
                             logger.trace("send ping message to server");
                         }
@@ -112,7 +111,7 @@ public class ConfigClient implements IConfigClient {
     /**
      * 开始尝试重连
      */
-    private void startAutoReconnect(){
+    private void startAutoReconnect() {
         reconnectThread = new Thread(() -> {
             while (!Thread.currentThread().isInterrupted()) {
                 try {
@@ -121,7 +120,7 @@ public class ConfigClient implements IConfigClient {
                         continue;
                     }
 
-                    if (tryConnect()){
+                    if (tryConnect()) {
                         load();
                     }
                 } catch (InterruptedException e) {
@@ -143,12 +142,12 @@ public class ConfigClient implements IConfigClient {
             String node = randomServer.next();
             List<ConfigItem> configs = getConfigsFromRemote(node);
             if (configs == null) {
-                if (idx == nodes.length -1) {
+                if (idx == nodes.length - 1) {
                     logger.info(String.format("can NOT get app's configs from all nodes . appid: %s", options.getAppId()));
                     testAll = true;
                     break;
                 }
-                idx ++;
+                idx++;
                 continue; // cant get configs from node , so try next .
             }
 
@@ -157,17 +156,15 @@ public class ConfigClient implements IConfigClient {
 
             if (data == null) {
                 data = new ConcurrentHashMap<>();
-            }
-            else {
+            } else {
                 data.clear();
             }
 
-            for (ConfigItem item: configs) {
+            for (ConfigItem item : configs) {
                 String key = "";
                 if (item.getGroup().isEmpty()) {
                     key = item.getKey();
-                }
-                else {
+                } else {
                     key = item.getGroup() + ":" + item.getKey();
                 }
                 data.put(key, item.getValue());
@@ -185,19 +182,20 @@ public class ConfigClient implements IConfigClient {
     /**
      * 把配置项写到本地文件，以便后面恢复的时候使用
      */
-    private void writeConfigsToLocal(List<ConfigItem> configs){
+    private void writeConfigsToLocal(List<ConfigItem> configs) {
 
     }
 
     /**
      * 从本地缓存的文件恢复配置项
      */
-    private void reloadConfigsFromLocal(){
+    private void reloadConfigsFromLocal() {
 
     }
 
     /**
      * 从远程服务器拉取配置项
+     *
      * @param nodeAddress 远程服务器地址
      * @return
      */

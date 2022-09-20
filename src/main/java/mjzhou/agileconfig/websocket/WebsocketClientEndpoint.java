@@ -11,10 +11,11 @@ import javax.websocket.*;
 /**
  * websocket Client
  * copy from https://stackoverflow.com/questions/26452903/javax-websocket-client-simple-example
+ *
  * @author Jiji_Sasidharan
  */
 public class WebsocketClientEndpoint extends Endpoint {
-    private static final Logger logger =  LoggerFactory.getLogger(WebsocketClientEndpoint.class);
+    private static final Logger logger = LoggerFactory.getLogger(WebsocketClientEndpoint.class);
 
     public boolean isOpened() {
         return opened;
@@ -51,7 +52,7 @@ public class WebsocketClientEndpoint extends Endpoint {
 
     private String nodeAddress;
 
-    public WebsocketClientEndpoint(String appid,String secret, String env, String nodeAddress) {
+    public WebsocketClientEndpoint(String appid, String secret, String env, String nodeAddress) {
         this._this = this;
         this.appid = appid;
         this.secret = secret;
@@ -61,17 +62,17 @@ public class WebsocketClientEndpoint extends Endpoint {
         webSocketContainer = ContainerProvider.getWebSocketContainer();
     }
 
-    public void connect(){
+    public void connect() {
         String server = nodeAddress;
-        if (!server.endsWith("/")){
+        if (!server.endsWith("/")) {
             server += "/";
         }
-        server  += "ws";
-        if (server.startsWith("http://")){
-            server = server.replace("http://","ws://");
+        server += "ws";
+        if (server.startsWith("http://")) {
+            server = server.replace("http://", "ws://");
         }
-        if (server.startsWith("https://")){
-            server = server.replace("https://","wss://");
+        if (server.startsWith("https://")) {
+            server = server.replace("https://", "wss://");
         }
         ClientEndpointConfig.Builder configBuilder = ClientEndpointConfig.Builder.create();
         configBuilder.configurator(new WebsocketClientConfig(this.appid, this.secret, this.env));
@@ -84,7 +85,7 @@ public class WebsocketClientEndpoint extends Endpoint {
         }
     }
 
-    public void disconnect(){
+    public void disconnect() {
         if (opened) {
             if (userSession != null) {
                 try {
@@ -113,7 +114,7 @@ public class WebsocketClientEndpoint extends Endpoint {
      * Callback hook for Connection close events.
      *
      * @param userSession the userSession which is getting closed.
-     * @param reason the reason for connection close
+     * @param reason      the reason for connection close
      */
     @Override
     public void onClose(Session userSession, CloseReason reason) {
@@ -156,7 +157,6 @@ public class WebsocketClientEndpoint extends Endpoint {
 
     /**
      * Message handler.
-     *
      */
     public static interface MessageHandler {
 

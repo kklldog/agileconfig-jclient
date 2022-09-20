@@ -11,7 +11,7 @@ import java.io.IOException;
 public class DefaultJsonConvert implements IJsonConvert {
     private static final ObjectMapper mapper = new ObjectMapper();
 
-    public DefaultJsonConvert(){
+    public DefaultJsonConvert() {
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
 
@@ -19,24 +19,22 @@ public class DefaultJsonConvert implements IJsonConvert {
 
     @Override
     public <T> T deserializeObject(String json, TypeReference<T> typeReference) {
-         try {
-             return mapper.readValue(json, typeReference);
-         }
-         catch (Exception ex) {
+        try {
+            return mapper.readValue(json, typeReference);
+        } catch (Exception ex) {
             ex.printStackTrace();
-         }
+        }
 
-         return  null;
+        return null;
     }
 
     @Override
-    public String serializeObject(Object object){
+    public String serializeObject(Object object) {
         try {
             String json = mapper.writeValueAsString(object);
 
             return json;
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 

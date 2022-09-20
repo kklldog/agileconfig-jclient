@@ -7,9 +7,10 @@ public class ConfigItem {
 
     public String getKey() {
         if (key == null)
-            return  "";
+            return "";
         return key;
     }
+
     public void setKey(String key) {
         this.key = key;
     }
@@ -17,9 +18,10 @@ public class ConfigItem {
 
     public String getValue() {
         if (value == null)
-            return  "";
+            return "";
         return value;
     }
+
     public void setValue(String value) {
         this.value = value;
     }
@@ -27,9 +29,10 @@ public class ConfigItem {
 
     public String getGroup() {
         if (group == null)
-            return  "";
+            return "";
         return group;
     }
+
     public void setGroup(String group) {
         this.group = group;
     }

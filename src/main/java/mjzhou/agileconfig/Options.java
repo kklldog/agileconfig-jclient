@@ -21,7 +21,7 @@ public class Options {
         nodeArray = strNodes.split(",");
     }
 
-    private String ensureEmptyString(String str){
+    private String ensureEmptyString(String str) {
         if (str == null) {
             return "";
         }

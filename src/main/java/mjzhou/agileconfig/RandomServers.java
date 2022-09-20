@@ -4,20 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class RandomServers
-{
+public class RandomServers {
     private String[] _serverUrls;
     private List<Integer> _serverIndexs;
     private int _startIndex = -1;
-    public RandomServers(String[] serverUrls)
-    {
+
+    public RandomServers(String[] serverUrls) {
         _serverIndexs = new ArrayList<>();
-        if (serverUrls != null && serverUrls.length > 0)
-        {
+        if (serverUrls != null && serverUrls.length > 0) {
             _serverUrls = serverUrls;
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("argument serverUrls can not be null or empty .");
         }
 
@@ -25,14 +21,11 @@ public class RandomServers
         _serverIndexs.add(randomIndex);
 
         int index = randomIndex + 1;
-        while (true)
-        {
-            if (index == randomIndex)
-            {
+        while (true) {
+            if (index == randomIndex) {
                 break;
             }
-            if (index >= _serverUrls.length)
-            {
+            if (index >= _serverUrls.length) {
                 index = index - _serverUrls.length;
                 continue;
             }
@@ -41,27 +34,23 @@ public class RandomServers
         }
     }
 
-    private int getNextIndex()
-    {
-        if (isComplete())
-        {
-            return  -1;
+    private int getNextIndex() {
+        if (isComplete()) {
+            return -1;
         }
         _startIndex++;
 
         return _startIndex;
     }
 
-    public boolean isComplete()
-    {
+    public boolean isComplete() {
         return _startIndex + 1 >= _serverIndexs.stream().count();
     }
 
-    public String next()
-    {
+    public String next() {
         int idx = getNextIndex();
         if (idx == -1) {
-            return  "";
+            return "";
         }
         return _serverUrls[_serverIndexs.get(idx)];
     }

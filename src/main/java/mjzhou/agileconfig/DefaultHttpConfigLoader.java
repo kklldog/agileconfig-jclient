@@ -14,21 +14,21 @@ import java.util.List;
 
 public class DefaultHttpConfigLoader implements IConfigLoader {
 
-    private static final Logger logger =  LoggerFactory.getLogger(DefaultHttpConfigLoader.class);
+    private static final Logger logger = LoggerFactory.getLogger(DefaultHttpConfigLoader.class);
     private static final IJsonConvert jsonConvert = new DefaultJsonConvert();
 
     @Override
     public List<ConfigItem> getConfigs(String node, String appId, String appSecret, String env) {
-        if (!node.endsWith("/")){
+        if (!node.endsWith("/")) {
             node += "/";
         }
         String reqUrl = node + "api/config/app/" + appId;
         try {
             URL url = new URL(reqUrl);
-            HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             //set basic auth header .
-            String encoded = Base64.getEncoder().encodeToString((appId+":"+appSecret).getBytes(StandardCharsets.UTF_8));
-            conn.setRequestProperty("Authorization", "Basic "+encoded);
+            String encoded = Base64.getEncoder().encodeToString((appId + ":" + appSecret).getBytes(StandardCharsets.UTF_8));
+            conn.setRequestProperty("Authorization", "Basic " + encoded);
             int code = conn.getResponseCode();
             if (code == 200) {
                 try (BufferedReader in = new BufferedReader(new InputStreamReader(
@@ -41,17 +41,17 @@ public class DefaultHttpConfigLoader implements IConfigLoader {
                     String json = buff.toString();
                     logger.trace("request " + reqUrl + " then response :\n" + json);
 
-                    return jsonConvert.deserializeObject(json, new TypeReference<List<ConfigItem>>(){});
+                    return jsonConvert.deserializeObject(json, new TypeReference<List<ConfigItem>>() {
+                    });
                 }
             } else {
                 logger.warn("request " + reqUrl + " failed , the response status code is " + code);
-                return  null;
+                return null;
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             //log ERROR
             logger.error("when request " + reqUrl + " error .", ex);
         }
-        return  null;
+        return null;
     }
 }

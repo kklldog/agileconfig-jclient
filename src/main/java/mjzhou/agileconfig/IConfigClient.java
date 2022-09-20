@@ -6,9 +6,10 @@ public interface IConfigClient {
 
     /**
      * get all config items
+     *
      * @return
      */
-    Map<String,String> getConfigs();
+    Map<String, String> getConfigs();
 
     /**
      * get config value by key
@@ -16,7 +17,7 @@ public interface IConfigClient {
     String get(String key);
 
     /**
-     *  connect to agileconfig server
+     * connect to agileconfig server
      */
     void connect();
 

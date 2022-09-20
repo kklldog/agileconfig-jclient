@@ -15,13 +15,13 @@ class ConfigClientTest {
         String appId = "test_app";
         String appSecret = "test_app";
         String env = "";
-        Options op = new Options(node,appId,appSecret,env);
-        ConfigClient client =new ConfigClient(op);
+        Options op = new Options(node, appId, appSecret, env);
+        ConfigClient client = new ConfigClient(op);
         client.load();
         assertNotNull(client.getConfigs());
-        Map<String,String> configs = client.getConfigs();
-        for (Map.Entry<String,String> kv: configs.entrySet()
-             ) {
+        Map<String, String> configs = client.getConfigs();
+        for (Map.Entry<String, String> kv : configs.entrySet()
+        ) {
             System.out.println(kv.getKey() + "=" + kv.getValue());
         }
     }
@@ -32,12 +32,12 @@ class ConfigClientTest {
         String appId = "test_app";
         String appSecret = "test_app";
         String env = "";
-        Options op = new Options(node,appId,appSecret,env);
-        ConfigClient client =new ConfigClient(op);
+        Options op = new Options(node, appId, appSecret, env);
+        ConfigClient client = new ConfigClient(op);
         client.connect();
         assertNotNull(client.getConfigs());
-        Map<String,String> configs = client.getConfigs();
-        for (Map.Entry<String,String> kv: configs.entrySet()
+        Map<String, String> configs = client.getConfigs();
+        for (Map.Entry<String, String> kv : configs.entrySet()
         ) {
             System.out.println(kv.getKey() + "=" + kv.getValue());
         }
@@ -52,19 +52,19 @@ class ConfigClientTest {
         String appId = "test_app";
         String appSecret = "test_app";
         String env = "";
-        Options op = new Options(node,appId,appSecret,env);
-        ConfigClient client =new ConfigClient(op);
+        Options op = new Options(node, appId, appSecret, env);
+        ConfigClient client = new ConfigClient(op);
         client.connect();
         assertNotNull(client.getConfigs());
-        Map<String,String> configs = client.getConfigs();
-        for (Map.Entry<String,String> kv: configs.entrySet()
+        Map<String, String> configs = client.getConfigs();
+        for (Map.Entry<String, String> kv : configs.entrySet()
         ) {
             System.out.println(kv.getKey() + "=" + kv.getValue());
         }
 
         client.disconnect();
 
-        ConfigClient client1 =new ConfigClient(op);
+        ConfigClient client1 = new ConfigClient(op);
         client1.disconnect();
     }
 }

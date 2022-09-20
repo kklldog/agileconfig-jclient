@@ -9,9 +9,10 @@ public class WebsocketMessageHandler implements WebsocketClientEndpoint.MessageH
     IJsonConvert jsonConvert = new DefaultJsonConvert();
     IConfigClient configClient;
 
-    public WebsocketMessageHandler(IConfigClient client){
+    public WebsocketMessageHandler(IConfigClient client) {
         configClient = client;
     }
+
     @Override
     public void handleMessage(String message) {
         if (message == null || message.isEmpty()) {
