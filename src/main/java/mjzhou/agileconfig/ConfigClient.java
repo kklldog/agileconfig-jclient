@@ -5,6 +5,7 @@ import mjzhou.agileconfig.websocket.WebsocketMessageHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,6 +15,14 @@ import static mjzhou.agileconfig.Encrypt.md5;
 
 public class ConfigClient implements IConfigClient {
     private static final Logger logger = LoggerFactory.getLogger(ConfigClient.class);
+
+    private static final Comparator<String> stringComparator = new Comparator<String>() {
+        @Override
+        public int compare(String o1, String o2) {
+            return o1.toLowerCase().compareTo(o2.toLowerCase());
+        }
+    };
+
     private final Options options;
     private Map<String, String> data;
     private final IConfigLoader configLoader;
@@ -94,13 +103,14 @@ public class ConfigClient implements IConfigClient {
             return  "";
         }
 
-        List<String> keys =  this.data.keySet().stream().sorted().collect(Collectors.toList());
-        List<String> vals = this.data.values().stream().sorted().collect(Collectors.toList());
+
+        List<String> keys =  this.data.keySet().stream().sorted(stringComparator).collect(Collectors.toList());
+        List<String> vals = this.data.values().stream().sorted(stringComparator).collect(Collectors.toList());
         String strKeys = String.join("&", keys);
         String strVals = String.join("&", vals);
         String sourceText = strKeys + "&" + strVals;
 
-        return  md5(sourceText);
+        return  md5(sourceText).toUpperCase();
     }
 
     /**
@@ -215,7 +225,6 @@ public class ConfigClient implements IConfigClient {
      * 从远程服务器拉取配置项
      *
      * @param nodeAddress 远程服务器地址
-     * @return
      */
     private List<ConfigItem> getConfigsFromRemote(String nodeAddress) {
         return configLoader.getConfigs(nodeAddress, options.getAppId(), options.getSecret(), options.getEnv());
