@@ -40,6 +40,8 @@ class ConfigClientTest {
         for (Map.Entry<String, String> kv : configs.entrySet()
         ) {
             System.out.println(kv.getKey() + "=" + kv.getValue());
+            String val = client.get(kv.getKey());
+            System.out.println(kv.getKey() + "=" + val);
         }
 
 //        Scanner input = new Scanner(System.in);

@@ -30,4 +30,6 @@ public interface IConfigClient {
      * disconnect from server
      */
     void disconnect();
+
+    String md5Version();
 }

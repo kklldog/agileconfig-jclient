@@ -5,10 +5,12 @@ import mjzhou.agileconfig.websocket.WebsocketMessageHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+
+import static mjzhou.agileconfig.Encrypt.md5;
 
 public class ConfigClient implements IConfigClient {
     private static final Logger logger = LoggerFactory.getLogger(ConfigClient.class);
@@ -18,7 +20,7 @@ public class ConfigClient implements IConfigClient {
 
     private Thread pingThread;
     private Thread reconnectThread;
-
+    private static final int pingInterval = 30;
     private WebsocketClientEndpoint websocketClient;
 
     public ConfigClient(Options options) {
@@ -49,12 +51,13 @@ public class ConfigClient implements IConfigClient {
         RandomServers randomServer = new RandomServers(this.options.getNodes());
         while (!randomServer.isComplete()) {
             String node = randomServer.next();
-            websocketClient = new WebsocketClientEndpoint(this.options.getAppId(), this.options.getSecret(),
+            WebsocketClientEndpoint endpoint = new WebsocketClientEndpoint(this.options.getAppId(), this.options.getSecret(),
                     this.options.getEnv(), node);
-            websocketClient.addMessageHandler(new WebsocketMessageHandler(this));
+            endpoint.addMessageHandler(new WebsocketMessageHandler(this));
             try {
-                websocketClient.connect();
-                logger.info("connect to server " + websocketClient.getNodeAddress() + "successful .");
+                endpoint.connect();
+                this.websocketClient = endpoint;
+                logger.info("connect to server " + endpoint.getNodeAddress() + " successful .");
                 return true;
             } catch (Exception e) {
                 logger.error(String.format("try connect to server %s fail .", node), e);
@@ -85,6 +88,21 @@ public class ConfigClient implements IConfigClient {
         }
     }
 
+    @Override
+    public String md5Version() {
+        if (data == null) {
+            return  "";
+        }
+
+        List<String> keys =  this.data.keySet().stream().sorted().collect(Collectors.toList());
+        List<String> vals = this.data.values().stream().sorted().collect(Collectors.toList());
+        String strKeys = String.join("&", keys);
+        String strVals = String.join("&", vals);
+        String sourceText = strKeys + "&" + strVals;
+
+        return  md5(sourceText);
+    }
+
     /**
      * 打开一个新的线程开始定时发送ping消息
      */
@@ -94,7 +112,7 @@ public class ConfigClient implements IConfigClient {
             public void run() {
                 while (!Thread.currentThread().isInterrupted()) {
                     try {
-                        Thread.sleep(5000);
+                        Thread.sleep(pingInterval * 1000);
                         if (websocketClient != null && websocketClient.isOpened()) {
                             websocketClient.sendMessage("ping");
                             logger.trace("send ping message to server");
