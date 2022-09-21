@@ -27,7 +27,7 @@ public class ConfigClient implements IConfigClient {
         }
     };
 
-    private IJsonConvert jsonConvert = new DefaultJsonConvert();
+    private final IJsonConvert jsonConvert = new DefaultJsonConvert();
 
     private final Options options;
     private Map<String, String> data;

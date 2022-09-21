@@ -11,8 +11,8 @@ public class WebsocketMessageHandler implements WebsocketClientEndpoint.MessageH
 
     private static final Logger logger = LoggerFactory.getLogger(WebsocketMessageHandler.class);
 
-    private IJsonConvert jsonConvert = new DefaultJsonConvert();
-    private IConfigClient configClient;
+    private final IJsonConvert jsonConvert = new DefaultJsonConvert();
+    private final IConfigClient configClient;
 
     public WebsocketMessageHandler(IConfigClient client) {
         configClient = client;

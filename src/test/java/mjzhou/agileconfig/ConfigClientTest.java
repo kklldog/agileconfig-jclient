@@ -38,6 +38,7 @@ class ConfigClientTest {
         ConfigClient client2 = new ConfigClient(op2);
         client2.load();
         //assertNotNull(client2.getConfigs());
+        //todo finish this ut
     }
 
     @Test

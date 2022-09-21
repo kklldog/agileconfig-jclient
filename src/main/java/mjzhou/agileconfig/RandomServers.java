@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Random;
 
 public class RandomServers {
-    private String[] _serverUrls;
-    private List<Integer> _serverIndexs;
+    private final String[] _serverUrls;
+    private final List<Integer> _serverIndexs;
     private int _startIndex = -1;
 
     public RandomServers(String[] serverUrls) {

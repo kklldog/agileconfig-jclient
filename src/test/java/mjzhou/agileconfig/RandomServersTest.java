@@ -18,7 +18,7 @@ class RandomServersTest {
         };
         RandomServers rds1 = new RandomServers(servers1);
         boolean cp1 = rds1.isComplete();
-        assertTrue(!cp1);
+        assertFalse(cp1);
         rds1.next();
         cp1 = rds1.isComplete();
         assertTrue(cp1);

@@ -26,13 +26,13 @@ public class WebsocketClientEndpoint extends Endpoint {
     private Session userSession = null;
     private MessageHandler messageHandler;
 
-    private WebSocketContainer webSocketContainer;
+    private final WebSocketContainer webSocketContainer;
 
-    private WebsocketClientEndpoint _this;
+    private final WebsocketClientEndpoint _this;
 
-    private String appid;
-    private String secret;
-    private String env;
+    private final String appid;
+    private final String secret;
+    private final String env;
 
     public String getAppid() {
         return appid;
@@ -50,7 +50,7 @@ public class WebsocketClientEndpoint extends Endpoint {
         return nodeAddress;
     }
 
-    private String nodeAddress;
+    private final String nodeAddress;
 
     public WebsocketClientEndpoint(String appid, String secret, String env, String nodeAddress) {
         this._this = this;
@@ -158,8 +158,8 @@ public class WebsocketClientEndpoint extends Endpoint {
     /**
      * Message handler.
      */
-    public static interface MessageHandler {
+    public interface MessageHandler {
 
-        public void handleMessage(String message);
+        void handleMessage(String message);
     }
 }
