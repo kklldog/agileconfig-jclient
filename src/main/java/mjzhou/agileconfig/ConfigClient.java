@@ -1,10 +1,14 @@
 package mjzhou.agileconfig;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import mjzhou.agileconfig.websocket.WebsocketClientEndpoint;
 import mjzhou.agileconfig.websocket.WebsocketMessageHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +26,8 @@ public class ConfigClient implements IConfigClient {
             return o1.toLowerCase().compareTo(o2.toLowerCase());
         }
     };
+
+    private IJsonConvert jsonConvert = new DefaultJsonConvert();
 
     private final Options options;
     private Map<String, String> data;
@@ -201,7 +207,7 @@ public class ConfigClient implements IConfigClient {
             break;
         }
 
-        if (testAll) {
+        if (testAll && this.options.isReloadFromLocal()) {
             // 如果所有的节点尝试获取配置都失败，那么从本地文件恢复
             reloadConfigsFromLocal();
         }
@@ -211,14 +217,51 @@ public class ConfigClient implements IConfigClient {
      * 把配置项写到本地文件，以便后面恢复的时候使用
      */
     private void writeConfigsToLocal(List<ConfigItem> configs) {
+        String content = jsonConvert.serializeObject(configs);
+        String fileName = GenerateCacheFileName();
+        Path path = Paths.get(this.options.getCacheDirectory(), fileName);
 
+        try {
+            Files.write(path, content.getBytes());
+            logger.info("save config items cache to local file " + path + " successful .");
+        }
+        catch (Exception e) {
+            logger.error("save config items cache to local file error .", e);
+        }
     }
 
     /**
      * 从本地缓存的文件恢复配置项
      */
     private void reloadConfigsFromLocal() {
+        String fileName = GenerateCacheFileName();
+        Path path = Paths.get(this.options.getCacheDirectory(), fileName);
 
+        try {
+            byte[] data = Files.readAllBytes(path);
+            String content = new String(data);
+            if (content != null && !content.isEmpty()) {
+                List<ConfigItem> configs = jsonConvert.deserializeObject(content, new TypeReference<List<ConfigItem>>() {
+                });
+
+                if (configs != null) {
+                    //TODO load configs
+
+
+                    logger.info("load config items from local cache file " + path + " successful .");
+                }
+            }
+        }
+        catch (Exception e) {
+            logger.error("load config items from local cache file error .", e);
+        }
+    }
+
+    private String GenerateCacheFileName () {
+       // private string LocalCacheFileName => Path.Combine(_options.CacheDirectory, $"{_options.AppId}.agileconfig.client.configs.cache");
+        String fileName = String.format("%s.agileconfig.client.configs.cache", this.options.getAppId());
+
+        return  fileName;
     }
 
     /**
