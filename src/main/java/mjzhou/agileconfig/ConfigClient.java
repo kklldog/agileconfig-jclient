@@ -41,7 +41,6 @@ public class ConfigClient implements IConfigClient {
     public ConfigClient(Options options) {
         configLoader = new DefaultHttpConfigLoader();
         this.options = options;
-        startPing();
     }
 
     @Override
@@ -186,30 +185,36 @@ public class ConfigClient implements IConfigClient {
             }
 
             logger.info(String.format("get app's configs from node success . appid: %s , node: %s", options.getAppId(), node));
+
             writeConfigsToLocal(configs); // 获取到配置后第一时间写到本地文件
 
-            if (data == null) {
-                data = new ConcurrentHashMap<>();
-            } else {
-                data.clear();
-            }
-
-            for (ConfigItem item : configs) {
-                String key = "";
-                if (item.getGroup().isEmpty()) {
-                    key = item.getKey();
-                } else {
-                    key = item.getGroup() + ":" + item.getKey();
-                }
-                data.put(key, item.getValue());
-            }
+            this.load(configs);
 
             break;
         }
 
-        if (testAll && this.options.isReloadFromLocal()) {
+        if (testAll) {
             // 如果所有的节点尝试获取配置都失败，那么从本地文件恢复
             reloadConfigsFromLocal();
+        }
+    }
+
+    @Override
+    public void load(List<ConfigItem> configs) {
+        if (this.data == null) {
+            this.data = new ConcurrentHashMap<>();
+        } else {
+            this.data.clear();
+        }
+
+        for (ConfigItem item : configs) {
+            String key = "";
+            if (item.getGroup().isEmpty()) {
+                key = item.getKey();
+            } else {
+                key = item.getGroup() + ":" + item.getKey();
+            }
+            data.put(key, item.getValue());
         }
     }
 
@@ -245,8 +250,7 @@ public class ConfigClient implements IConfigClient {
                 });
 
                 if (configs != null) {
-                    //TODO load configs
-
+                    this.load(configs);
 
                     logger.info("load config items from local cache file " + path + " successful .");
                 }

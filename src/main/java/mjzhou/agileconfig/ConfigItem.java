@@ -1,6 +1,16 @@
 package mjzhou.agileconfig;
 
 public class ConfigItem {
+
+    public ConfigItem(){
+    }
+
+    public ConfigItem(String group, String key, String val) {
+        this.group = group;
+        this.key = key;
+        this.value = val;
+    }
+
     private String key;
     private String value;
     private String group;

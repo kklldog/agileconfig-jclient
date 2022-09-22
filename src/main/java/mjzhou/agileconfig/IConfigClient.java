@@ -1,5 +1,6 @@
 package mjzhou.agileconfig;
 
+import java.util.List;
 import java.util.Map;
 
 public interface IConfigClient {
@@ -25,6 +26,12 @@ public interface IConfigClient {
      * load config items from remote server
      */
     void load();
+
+    /**
+     * load config items from source
+     * @param configs
+     */
+    void load(List<ConfigItem> configs);
 
     /**
      * disconnect from server

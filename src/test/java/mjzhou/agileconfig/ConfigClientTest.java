@@ -2,6 +2,8 @@ package mjzhou.agileconfig;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -37,8 +39,7 @@ class ConfigClientTest {
         Options op2 = new Options(node, appId, appSecret, env);
         ConfigClient client2 = new ConfigClient(op2);
         client2.load();
-        //assertNotNull(client2.getConfigs());
-        //todo finish this ut
+        assertNotNull(client2.getConfigs());
     }
 
     @Test
@@ -83,5 +84,54 @@ class ConfigClientTest {
 
         ConfigClient client1 = new ConfigClient(op);
         client1.disconnect();
+    }
+
+    @Test
+    void testLoad() {
+        List<ConfigItem> configs = new ArrayList<>();
+        configs.add(new ConfigItem("1","2","3"));
+        configs.add(new ConfigItem("test","dt","fsdfsdf"));
+        configs.add(new ConfigItem("","dbstr","192.68.0.1"));
+
+        String node = "http://agileconfig-server.xbaby.xyz";
+        String appId = "test_app";
+        String appSecret = "test_app";
+        String env = "";
+        Options op = new Options(node, appId, appSecret, env);
+        ConfigClient client = new ConfigClient(op);
+
+        client.load(configs);
+
+        String val = client.get("x");
+        assertEquals("", val);
+        String val1 = client.get("1:2");
+        assertEquals("3", val1);
+        String val2 = client.get("test:dt");
+        assertEquals("fsdfsdf", val2);
+        String val3 = client.get("dbstr");
+        assertEquals("192.68.0.1", val3);
+    }
+
+    @Test
+    void md5Version() {
+        List<ConfigItem> configs = new ArrayList<>();
+        configs.add(new ConfigItem("1","2","3"));
+        configs.add(new ConfigItem("test","dt","fsdfsdf"));
+        configs.add(new ConfigItem("","dbstr","192.68.0.1"));
+
+        String node = "http://agileconfig-server.xbaby.xyz";
+        String appId = "test_app";
+        String appSecret = "test_app";
+        String env = "";
+        Options op = new Options(node, appId, appSecret, env);
+        ConfigClient client = new ConfigClient(op);
+
+        client.load(configs);
+
+        String md5 = client.md5Version();
+        //String exp = "1:2&dbstr&test:dt&192.68.0.1&3&fsdfsdf";
+        String exp = "8FA6A5F1EE70BCE760765A6EDFFC80AB" ;
+        assertEquals(exp, md5);
+
     }
 }
