@@ -133,7 +133,7 @@ public class ConfigClient implements IConfigClient {
                             logger.trace("send ping message to server");
                         }
                     } catch (InterruptedException e) {
-                        logger.error("HeartBeat Thread Interrupted .", e);
+                        logger.info("HeartBeat Thread Interrupted .", e);
                     }
                 }
             }
@@ -157,7 +157,7 @@ public class ConfigClient implements IConfigClient {
                         load();
                     }
                 } catch (InterruptedException e) {
-                    logger.error("AutoReconnect Thread Interrupted .", e);
+                    logger.info("AutoReconnect Thread Interrupted .", e);
                 }
             }
         });
@@ -193,7 +193,7 @@ public class ConfigClient implements IConfigClient {
             break;
         }
 
-        if (testAll) {
+        if (testAll && this.options.isReloadFromLocal()) {
             // 如果所有的节点尝试获取配置都失败，那么从本地文件恢复
             reloadConfigsFromLocal();
         }
@@ -243,16 +243,18 @@ public class ConfigClient implements IConfigClient {
         Path path = Paths.get(this.options.getCacheDirectory(), fileName);
 
         try {
-            byte[] data = Files.readAllBytes(path);
-            String content = new String(data);
-            if (content != null && !content.isEmpty()) {
-                List<ConfigItem> configs = jsonConvert.deserializeObject(content, new TypeReference<List<ConfigItem>>() {
-                });
+            if (Files.exists(path)) {
+                byte[] data = Files.readAllBytes(path);
+                String content = new String(data);
+                if (content != null && !content.isEmpty()) {
+                    List<ConfigItem> configs = jsonConvert.deserializeObject(content, new TypeReference<List<ConfigItem>>() {
+                    });
 
-                if (configs != null) {
-                    this.load(configs);
+                    if (configs != null) {
+                        this.load(configs);
 
-                    logger.info("load config items from local cache file " + path + " successful .");
+                        logger.info("load config items from local cache file " + path + " successful .");
+                    }
                 }
             }
         }

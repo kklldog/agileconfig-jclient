@@ -17,7 +17,7 @@ class ConfigClientTest {
         String node = "http://agileconfig_server.xbaby.xyz";
         String appId = "test_app";
         String appSecret = "x";
-        String env = "";
+        String env = "DEV";
         Options op = new Options(node, appId, appSecret, env);
         op.setReloadFromLocal(false);
         ConfigClient client = new ConfigClient(op);
@@ -47,7 +47,7 @@ class ConfigClientTest {
         String node = "http://agileconfig-server.xbaby.xyz";
         String appId = "test_app";
         String appSecret = "test_app";
-        String env = "";
+        String env = "DEV";
         Options op = new Options(node, appId, appSecret, env);
         ConfigClient client = new ConfigClient(op);
         client.connect();
@@ -69,7 +69,7 @@ class ConfigClientTest {
         String node = "http://agileconfig-server.xbaby.xyz";
         String appId = "test_app";
         String appSecret = "test_app";
-        String env = "";
+        String env = "DEV";
         Options op = new Options(node, appId, appSecret, env);
         ConfigClient client = new ConfigClient(op);
         client.connect();
@@ -96,7 +96,7 @@ class ConfigClientTest {
         String node = "http://agileconfig-server.xbaby.xyz";
         String appId = "test_app";
         String appSecret = "test_app";
-        String env = "";
+        String env = "DEV";
         Options op = new Options(node, appId, appSecret, env);
         ConfigClient client = new ConfigClient(op);
 
@@ -122,7 +122,7 @@ class ConfigClientTest {
         String node = "http://agileconfig-server.xbaby.xyz";
         String appId = "test_app";
         String appSecret = "test_app";
-        String env = "";
+        String env = "DEV";
         Options op = new Options(node, appId, appSecret, env);
         ConfigClient client = new ConfigClient(op);
 
