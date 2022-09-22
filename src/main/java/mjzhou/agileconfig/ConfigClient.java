@@ -225,8 +225,8 @@ public class ConfigClient implements IConfigClient {
         String content = jsonConvert.serializeObject(configs);
         String fileName = GenerateCacheFileName();
         String cacheDir = this.options.getCacheDirectory();
-        File folder = new File(cacheDir);
         if (!cacheDir.isEmpty()) {
+            File folder = new File(cacheDir);
             if (!folder.exists() && !folder.isDirectory()) {
                 folder.mkdirs();
             }
