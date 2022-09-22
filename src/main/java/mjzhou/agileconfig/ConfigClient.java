@@ -6,6 +6,7 @@ import mjzhou.agileconfig.websocket.WebsocketMessageHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -107,7 +108,6 @@ public class ConfigClient implements IConfigClient {
         if (data == null) {
             return  "";
         }
-
 
         List<String> keys =  this.data.keySet().stream().sorted(stringComparator).collect(Collectors.toList());
         List<String> vals = this.data.values().stream().sorted(stringComparator).collect(Collectors.toList());
@@ -224,8 +224,14 @@ public class ConfigClient implements IConfigClient {
     private void writeConfigsToLocal(List<ConfigItem> configs) {
         String content = jsonConvert.serializeObject(configs);
         String fileName = GenerateCacheFileName();
-        Path path = Paths.get(this.options.getCacheDirectory(), fileName);
-
+        String cacheDir = this.options.getCacheDirectory();
+        File folder = new File(cacheDir);
+        if (!cacheDir.isEmpty()) {
+            if (!folder.exists() && !folder.isDirectory()) {
+                folder.mkdirs();
+            }
+        }
+        Path path = Paths.get(cacheDir, fileName);
         try {
             Files.write(path, content.getBytes());
             logger.info("save config items cache to local file " + path + " successful .");

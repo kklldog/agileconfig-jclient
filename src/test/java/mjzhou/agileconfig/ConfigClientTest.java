@@ -2,6 +2,7 @@ package mjzhou.agileconfig;
 
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,20 @@ class ConfigClientTest {
         ConfigClient client2 = new ConfigClient(op2);
         client2.load();
         assertNotNull(client2.getConfigs());
+        // test cacheDir
+        appSecret = "test_app";
+        Options op3 = new Options(node, appId, appSecret, env);
+        op3.setCacheDirectory("c:/logs");
+        ConfigClient client3 = new ConfigClient(op3);
+        client3.load();
+        assertNotNull(client3.getConfigs());
+        // test not exist dir
+        appSecret = "test_app";
+        Options op4 = new Options(node, appId, appSecret, env);
+        op4.setCacheDirectory("c:/logs/" + LocalDateTime.now().hashCode());
+        ConfigClient client4 = new ConfigClient(op4);
+        client4.load();
+        assertNotNull(client4.getConfigs());
     }
 
     @Test
