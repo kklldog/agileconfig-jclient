@@ -1,8 +1,8 @@
 package mjzhou.agileconfig.websocket;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import mjzhou.agileconfig.DefaultJsonConvert;
 import mjzhou.agileconfig.IConfigClient;
+import com.fasterxml.jackson.core.type.TypeReference;
 import mjzhou.agileconfig.IJsonConvert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

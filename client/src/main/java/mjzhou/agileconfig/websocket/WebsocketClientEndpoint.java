@@ -1,6 +1,5 @@
 package mjzhou.agileconfig.websocket;
 
-import mjzhou.agileconfig.Options;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

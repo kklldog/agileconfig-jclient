@@ -1,12 +1,9 @@
 package mjzhou.agileconfig;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.io.IOException;
 
 public class DefaultJsonConvert implements IJsonConvert {
     private static final ObjectMapper mapper = new ObjectMapper();
