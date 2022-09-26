@@ -44,7 +44,7 @@ public class RandomServers {
     }
 
     public boolean isComplete() {
-        return _startIndex + 1 >= _serverIndexs.stream().count();
+        return _startIndex + 1 >= _serverIndexs.size();
     }
 
     public String next() {

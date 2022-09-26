@@ -4,8 +4,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DefaultJsonConvert implements IJsonConvert {
+    private static final Logger logger = LoggerFactory.getLogger(DefaultJsonConvert.class);
     private static final ObjectMapper mapper = new ObjectMapper();
 
     public DefaultJsonConvert() {
@@ -19,7 +22,7 @@ public class DefaultJsonConvert implements IJsonConvert {
         try {
             return mapper.readValue(json, typeReference);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error("deserializeObject json to Type " + typeReference.getType() + " error .", ex);
         }
 
         return null;
@@ -32,7 +35,7 @@ public class DefaultJsonConvert implements IJsonConvert {
 
             return json;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error("serializeObject object to json error .", ex);
         }
 
         return "";

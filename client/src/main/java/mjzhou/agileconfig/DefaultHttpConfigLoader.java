@@ -33,12 +33,12 @@ public class DefaultHttpConfigLoader implements IConfigLoader {
             if (code == 200) {
                 try (BufferedReader in = new BufferedReader(new InputStreamReader(
                         conn.getInputStream()))) {
-                    StringBuffer buff = new StringBuffer();
+                    StringBuilder sb = new StringBuilder();
                     String inputLine;
                     while ((inputLine = in.readLine()) != null)
-                        buff.append(inputLine + "\n");
+                        sb.append(inputLine + "\n");
 
-                    String json = buff.toString();
+                    String json = sb.toString();
                     logger.trace("request " + reqUrl + " then response :\n" + json);
 
                     return jsonConvert.deserializeObject(json, new TypeReference<List<ConfigItem>>() {
