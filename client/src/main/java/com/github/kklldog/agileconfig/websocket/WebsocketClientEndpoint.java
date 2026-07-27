@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import javax.websocket.*;
 
 /**
@@ -32,6 +34,8 @@ public class WebsocketClientEndpoint extends Endpoint {
     private final String appid;
     private final String secret;
     private final String env;
+    private final String name;
+    private final String tag;
 
     public String getAppid() {
         return appid;
@@ -52,11 +56,17 @@ public class WebsocketClientEndpoint extends Endpoint {
     private final String nodeAddress;
 
     public WebsocketClientEndpoint(String appid, String secret, String env, String nodeAddress) {
+        this(appid, secret, env, nodeAddress, "", "");
+    }
+
+    public WebsocketClientEndpoint(String appid, String secret, String env, String nodeAddress, String name, String tag) {
         this._this = this;
         this.appid = appid;
         this.secret = secret;
         this.env = env;
         this.nodeAddress = nodeAddress;
+        this.name = name == null ? "" : name;
+        this.tag = tag == null ? "" : tag;
 
         webSocketContainer = ContainerProvider.getWebSocketContainer();
     }
@@ -73,6 +83,7 @@ public class WebsocketClientEndpoint extends Endpoint {
         if (server.startsWith("https://")) {
             server = server.replace("https://", "wss://");
         }
+        server += "?client_name=" + urlEncode(this.name) + "&client_tag=" + urlEncode(this.tag);
         ClientEndpointConfig.Builder configBuilder = ClientEndpointConfig.Builder.create();
         configBuilder.configurator(new WebsocketClientConfig(this.appid, this.secret, this.env));
         ClientEndpointConfig clientConfig = configBuilder.build();
@@ -81,6 +92,14 @@ public class WebsocketClientEndpoint extends Endpoint {
             logger.info(String.format("websocket client connect to %s successful , appId: %s", server, this.appid));
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private static String urlEncode(String value) {
+        try {
+            return URLEncoder.encode(value, StandardCharsets.UTF_8.name());
+        } catch (Exception e) {
+            return value;
         }
     }
 
