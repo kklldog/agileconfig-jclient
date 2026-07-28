@@ -11,6 +11,7 @@
     <modules>
         <module>client</module>
         <module>starter</module>
+        <module>sample</module>
     </modules>
 
     <properties>

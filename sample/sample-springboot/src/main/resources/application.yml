@@ -1,0 +1,17 @@
+server:
+  port: 8080
+
+# 修改为你自己的 AgileConfig 服务端地址与应用信息
+agile:
+  config:
+    node: http://localhost:5000
+    appId: test_app
+    secret: test_secret
+    env: DEV
+    name: sample-springboot
+    httpTimeout: 100
+    reconnectInterval: 5
+    cache:
+      enabled: true
+      directory: ./config-cache
+      configEncrypt: false
