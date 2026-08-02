@@ -24,7 +24,7 @@ AgileConfig 的 Java 客户端。通过 HTTP 拉取配置，通过 WebSocket 接
 
 | 模块 | artifactId | 说明 |
 | --- | --- | --- |
-| client | `client` | 核心客户端，无 Spring 依赖，可独立使用 |
+| client | `agileconfig-client` | 核心客户端，无 Spring 依赖，可独立使用 |
 | starter | `agileconfig-boot-starter` | Spring Boot 自动装配 |
 
 ## 安装
@@ -40,7 +40,7 @@ mvn clean install -DskipTests
 ```xml
 <dependency>
     <groupId>com.github.kklldog.agileconfig</groupId>
-    <artifactId>client</artifactId>
+    <artifactId>agileconfig-client</artifactId>
     <version>1.0-SNAPSHOT</version>
 </dependency>
 ```
